@@ -10,6 +10,6 @@ output "private_subnets_ids" {
     value = aws_subnet.private[*].id 
 }
 
-output "database-subnet_ids" {
+output "database_subnet_ids" {
     value = aws_subnet.database[*].id 
 }
