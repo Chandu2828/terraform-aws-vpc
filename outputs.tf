@@ -13,3 +13,7 @@ output "private_subnet_ids" {
 output "database_subnet_ids" {
     value = aws_subnet.database[*].id 
 }
+
+output "azs_info" {
+    value = data.aws_availability_zones.available.names 
+}

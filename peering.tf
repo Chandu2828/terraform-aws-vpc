@@ -1,5 +1,5 @@
 resource "aws_vpc_peering_connection" "default" {
-    count       = var.is_peering_required ? 1 : 0
+    count       = var.is_peering_required ? 1 : 0 # It is a list 
     peer_vpc_id = data.aws_vpc.default.id # acceptor
     vpc_id      = aws_vpc.main.id # requestor
     auto_accept = true 
@@ -49,4 +49,5 @@ resource "aws_route" "default"{
     route_table_id = data.aws_route_table.default.id 
     destination_cidr_block = var.vpc_cidr 
     vpc_peering_connection_id = aws_vpc_peering_connection.default[count.index].id 
+    # as vpc_peering connection is a list we should access it with count.index 
 }

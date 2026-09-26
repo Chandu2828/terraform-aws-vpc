@@ -1,7 +1,7 @@
 resource "aws_vpc" "main" {
     cidr_block              =   var.vpc_cidr
     instance_tenancy        =   "default"
-    enable_dns_hostnames    =   true
+    enable_dns_hostnames    =   true # to work dns internally
 
     tags = merge(
         var.vpc_tags,
@@ -24,14 +24,16 @@ resource "aws_subnet" "public" {
     count                   = length(var.public_subnet_cidrs)
     vpc_id                  = aws_vpc.main.id
     cidr_block              = var.public_subnet_cidrs[count.index]
-    availability_zone       = local.az_names[count.index]
-    map_public_ip_on_launch = true
+    availability_zone       = local.az_names[count.index] # us-east-1a
+    map_public_ip_on_launch = true # assigns public ip to an instance when launched with public subnet
 
     tags = merge(
         var.public_subnet_tags,
         local.common_tags,
         {
             Name = "${local.common_name}-public-${split("-", local.az_names[count.index])[2]}"
+            # roboshop-dev-public-1a 
+            # roboshop-dev-public-1b
         }
     )
 }
@@ -108,18 +110,21 @@ resource "aws_route_table_association" "public" {
     count           = length(var.public_subnet_cidrs)
     subnet_id       = aws_subnet.public[count.index].id
     route_table_id  =  aws_route_table.public.id
+    # public subnet will assosiate with the public route table
 }
 
 resource "aws_route_table_association" "private" {
     count           = length(var.private_subnet_cidrs)
     subnet_id       = aws_subnet.private[count.index].id
     route_table_id  = aws_route_table.private.id
+    # private subnet will assosiate with the private route table
 }
 
 resource "aws_route_table_association" "database" {
     count = length(var.database_subnet_cidrs)
     subnet_id = aws_subnet.database[count.index].id
     route_table_id = aws_route_table.database.id 
+    # database subnet will assosiate with the database route table
 }
 
 resource "aws_eip" "nat"{
