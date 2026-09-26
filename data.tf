@@ -1,4 +1,4 @@
-# Shows the availabile zone for the region which is mention in the provider.tf
+# Shows the availabile zone for the region which is mentioned in the provider.tf
 data "aws_availability_zones" "available" {
     state = "available"
 }
